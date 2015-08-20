@@ -1,0 +1,35 @@
+$wrapper-width: 1200px;
+$animation-speed: 300ms;
+$max-z-index: 1000;
+
+$breakpoints: (
+  desktop: $wrapper-width,
+  big-tablet: 780px,
+  small-tablet: 580px,
+);
+
+// ================================ DIMENSIONS =================================
+$dimensions: ();
+
+// =============================== FONT WEIGHTS ================================
+$font-weights: (
+  thin: 100,
+  light: 200,
+  regular: 300,
+  bold: 400,
+  bolder: 500,
+  semibold: 600,
+  black: 700,
+  semiblack: 800,
+  dark: 900,
+);
+
+// ================================== COLORS ===================================
+$white: #fff;
+$black: #000;
+
+$dark: ();
+$grey: ();
+$green: ();
+$blue: ();
+$pink: ();

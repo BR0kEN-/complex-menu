@@ -1,0 +1,277 @@
+// =============================================================================
+// Breakpoints
+
+// CSS3 Media Queries
+//
+// Result of:
+//   @include breakpoint((from: 1024px, to: 1360px)) {
+//     body {
+//       background: red;
+//     }
+//   }
+// will be the next:
+//   @media (max-width: 1360px) and (min-width: 1024px) {
+//     body {
+//       background: red;
+//     }
+//   }
+//
+// Also, you can define the breakpoints with human-readable names in
+// single "$breakpoints" variable and use an object keys as value of
+// some breakpoint.
+//
+// Result of:
+//   $breakpoints: (
+//     first: 1360px,
+//     second: 1024px,
+//   );
+//
+//   @include breakpoint((from: second, to: first)) {
+//     body {
+//       background: red;
+//     }
+//   }
+// will be the same as in first example.
+@mixin breakpoint($map) {
+  $directions: (from: min, to: max);
+  $query: '';
+
+  @each $direction, $breakpoint in $map {
+    @if map_has_key($directions, $direction) {
+      @if $query != '' {
+        $query: $query + ') and (';
+      }
+
+      @if variable-exists(breakpoints) and map_has_key($breakpoints, $breakpoint) {
+        $breakpoint: map_get($breakpoints, $breakpoint);
+      }
+
+      $query: $query + map_get($directions, $direction) + '-width: ' + $breakpoint;
+    }
+  }
+
+  @if $query != '' {
+    @media #{'(' + $query + ')'} {
+      @content;
+    }
+  }
+}
+
+// =============================================================================
+// Fonts
+
+@function font-weight($weight) {
+  @if variable-exists(font-weights) {
+    @return map_get($font-weights, $weight);
+  }
+
+  @return null;
+}
+
+// Including fonts.
+// The font must be placed in: ../font/NAME/TRACING/TRACING.[eot|woff|ttf|svg]
+//
+// @example:
+//   @include include_font(Helvetica, thin);
+@mixin font-face($name, $weight, $path: '../fonts') {
+  $url: unquote($path + '/' + $name + '/' + $weight + '/' + $weight);
+
+  @font-face {
+    font-style: normal;
+    font-family: $name;
+    font-weight: font-weight($weight);
+    src: url($url + '.eot');
+    src: url($url + '.eot?#iefix') format('embedded-opentype'),
+    url($url + '.woff') format('woff'),
+    url($url + '.ttf') format('truetype'),
+    url($url + '.svg#' + $name) format('svg');
+  }
+}
+
+// Group for most useful font rules: "font-size", "line-height" and "font-weight";
+//
+// Second argument of this mixin processed for "font-weight" value.
+//
+// @example:
+//   @font(12px, bold);
+//   @font(12px, 30px, thin);
+@mixin font($size, $line-height: false, $weight: false) {
+  font-size: $size;
+
+  // Try to get a value from "font-weights" map.
+  $possible-weight: font-weight($line-height);
+
+  @if $possible-weight == null {
+    // Check for one of defaults value.
+    $defaults: bold, bolder, lighter, normal;
+    $index: index($defaults, $line-height);
+
+    @if $index != null {
+      $possible-weight: nth($defaults, $index);
+    }
+  }
+
+  @if $possible-weight != null {
+    $line-height: false;
+    font-weight: $possible-weight;
+  }
+  @elseif $weight != false {
+    $value: font-weight($weight);
+
+    @if $value == null {
+      $value: $weight;
+    }
+
+    font-weight: $value;
+  }
+
+  @if $line-height != false {
+    line-height: $line-height;
+  }
+}
+
+// =============================================================================
+// Headings
+
+// Combine two lists into map.
+//
+// Result of:
+//   combine(headings(), (16px, 18px, 20px, 22px, 24px, 26px));
+// will be the next:
+//  (h1: 16px, h2: 18px, h3: 20px, h4: 22px, h5: 24px, h6: 26px)
+@function combine($list1, $list2) {
+  $length1: length($list1);
+  $length2: length($list2);
+  $map: ();
+
+  @if $length1 == $length2 or $length2 > $length1 {
+    @for $i from 1 through $length1 {
+      $map: map_merge($map, (nth($list1, $i): nth($list2, $i)));
+    }
+  }
+
+  @return $map;
+}
+
+// =============================================================================
+// Other
+
+// Create a block of CSS rules with specified vendor prefixes.
+//
+// Result of:
+//   @include vendor-prefixes(box-shadow, 3px 0 6px rgba(0, 0, 0, .5), webkit, moz);
+// will be the next:
+//   -webkit-box-shadow: 3px 0 6px rgba(0, 0, 0, .5);
+//   -moz-box-shadow: 3px 0 6px rgba(0, 0, 0, .5);
+//   box-shadow: 3px 0 6px rgba(0, 0, 0, .5);
+@mixin vendor-prefixes($rule, $value, $prefixes...) {
+  @each $prefix in append($prefixes, '') {
+    @if $prefix != '' {
+      $prefix: '-#{$prefix}-';
+    }
+
+    #{$prefix}#{$rule}: unquote($value);
+  }
+}
+
+// Create a block with same CSS rule and different, prefixed, values.
+//
+// Result of:
+//   @include vendor-values(background, linear-gradient(top, #d2d2d2 0%, #dcdcdc 32%, #f0f0f0 75%, #f9f9f9 100%), webkit, moz, ms, o);
+// will be the next:
+//   background: -webkit-linear-gradient(top, #fafafa 0%, #f0f0f0 31%, #dcdcdc 72%, #d3d3d3 100%);
+//   background: -moz-linear-gradient(top, #fafafa 0%, #f0f0f0 31%, #dcdcdc 72%, #d3d3d3 100%);
+//   background: -ms-linear-gradient(top, #fafafa 0%, #f0f0f0 31%, #dcdcdc 72%, #d3d3d3 100%);
+//   background: -o-linear-gradient(top, #fafafa 0%, #f0f0f0 31%, #dcdcdc 72%, #d3d3d3 100%);
+@mixin vendor-values($property, $value, $prefixes...) {
+  @each $prefix in $prefixes {
+    @if $prefix != '' {
+      $prefix: '-#{$prefix}-';
+    }
+
+    #{$property}: unquote($prefix + $value);
+  }
+}
+
+@mixin table($vertical-align: middle, $important: false) {
+  display: table;
+  width: 100%;
+
+  @if $important {
+    $important: '!important';
+  }
+  @else {
+    $important: '';
+  }
+
+  & > * {
+    display: table-cell#{$important};
+    vertical-align: $vertical-align;
+    @content;
+  }
+}
+
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content;
+  }
+
+  @keyframes #{$name} {
+    @content;
+  }
+}
+
+// =============================================================================
+// Functions
+
+@function get-dimension($key) {
+  @if variable-exists(dimensions) {
+    @if map_has_key($dimensions, $key) {
+      @return map_get($dimensions, $key);
+    }
+    @else {
+      @error 'Undefined index "' + $key + '" in "$dimensions" map.';
+    }
+  }
+  @else {
+    @error 'Function "get-dimension" requires the "$dimensions" variable that is undefined.';
+  }
+}
+
+@function calc-vertical-position($parent-height, $child-height) {
+  @return (get-dimension($parent-height) - get-dimension($child-height)) / 2;
+}
+
+// =============================================================================
+// Custom
+
+@mixin full-width($position: absolute) {
+  position: $position;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@mixin user-select($value: none) {
+  @include vendor-prefixes(user-select, $value, webkit, moz, ms);
+}
+
+@mixin box-sizing($value: border-box) {
+  @include vendor-prefixes(box-sizing, $value, webkit, moz);
+}
+
+@mixin box-shadow($value) {
+  @include vendor-prefixes(box-shadow, $value, webkit, moz);
+}
+
+@mixin inline-block($align: top) {
+  display: inline-block;
+  vertical-align: $align;
+}
+
+@mixin same($value, $properties...) {
+  @each $property in $properties {
+    #{$property}: $value;
+  }
+}

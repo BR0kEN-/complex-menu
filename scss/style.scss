@@ -1,0 +1,15 @@
+@import 'variables', 'mixins', 'normalize';
+
+// Parts.
+@import 'parts/global-menu';
+
+.clearfix {
+  &:before,
+  &:after {
+    content: '';
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}

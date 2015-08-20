@@ -1,0 +1,164 @@
+/**
+ * Author: Sergey Bondarenko (BR0kEN), <broken@firstvector.org>
+ * Package: Normalize.css <https://github.com/BR0kEN-/normalize.css>
+ * License: MIT <https://raw.githubusercontent.com/BR0kEN-/normalize.css/master/LICENSE>
+ * Updated: May 26, 2015
+ * Version: 1.0.1
+ */
+body {
+  -webkit-text-size-adjust: none;
+  @each $prop in tap-highlight-color, focus-ring-color {
+    -webkit-#{$prop}: rgba(0, 0, 0, 0);
+  }
+}
+input,
+textarea {
+  @include user-select(text);
+}
+nav,
+main,
+aside,
+figure,
+footer,
+header,
+section,
+summary,
+article,
+details,
+figcaption {
+  display: block;
+}
+video,
+audio,
+canvas {
+  display: inline-block;
+}
+[hidden],
+audio:not([controls]) {
+  display: none;
+}
+html,
+body {
+  height: 100%;
+}
+html {
+  font-family: sans-serif;
+  @include vendor-prefixes(text-size-adjust, 100%, webkit, ms);
+}
+a:focus {
+  outline: thin dotted;
+}
+input,
+select,
+button,
+a:hover,
+textarea,
+a:active {
+  outline: 0;
+}
+img,
+abbr,
+input,
+button,
+iframe,
+textarea {
+  border: 0;
+}
+svg:not(:root) {
+  overflow: hidden;
+}
+input,
+button,
+select,
+textarea,
+[type=search]::-webkit-search-decoration,
+[type=search]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+input,
+button,
+select,
+textarea {
+  font-size: 100%;
+  font-family: inherit;
+  border-radius: 0;
+  @include vendor-prefixes(transition, 'border linear .2s, box-shadow linear .2s, background linear .2s', webkit, moz);
+  @include vendor-prefixes(appearance, none, moz);
+  box-shadow: none;
+}
+input,
+button {
+  line-height: normal;
+}
+button,
+label[for],
+[type=reset],
+[type=button],
+[type=submit] {
+  cursor: pointer;
+}
+button,
+[type=reset],
+[type=button],
+[type=submit] {
+  -webkit-appearance: button;
+}
+body,
+[disabled] {
+  cursor: default;
+}
+input,
+button,
+select,
+textarea,
+[type=radio],
+[type=checkbox] {
+  @include box-sizing();
+}
+p,
+ol,
+ul,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+body,
+input,
+button,
+select,
+figure,
+textarea,
+figcaption {
+  margin: 0;
+}
+p,
+ol,
+ul,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+button,
+figure,
+figcaption,
+[type=radio],
+[type=checkbox] {
+  padding: 0;
+}
+textarea {
+  resize: none;
+  overflow: auto;
+}
+ol,
+ul {
+  list-style: none;
+}
+img,
+textarea {
+  vertical-align: top;
+}

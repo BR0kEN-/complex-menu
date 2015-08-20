@@ -1,0 +1,102 @@
+#global_menu {
+  %active-parent {
+    background: #eee;
+  }
+
+  .submenus {
+    position: absolute;
+    z-index: 1000;
+    left: 0;
+    top: 100%;
+  }
+
+  .desktop {
+    border: solid #ccc;
+    border-width: 1px 0;
+    & > li {
+      position: relative;
+      float: left;
+      border-right: 1px solid #ccc;
+      &:last-child {
+        border: 0;
+      }
+      & > a {
+        @include font(16px, 40px);
+        display: block;
+        padding: 0 10px;
+        &:hover {
+          @extend %active-parent;
+        }
+      }
+      &:hover {
+        & > a {
+          @extend %active-parent;
+        }
+        & > .submenu {
+          display: table;
+          visibility: visible;
+        }
+      }
+    }
+
+    //
+    .submenu {
+      @extend .submenus;
+      display: table;
+      vertical-align: top;
+      padding: 10px;
+      background: #eee;
+      visibility: hidden;
+      white-space: nowrap;
+      & > * {
+        display: table-cell;
+        padding: 0 10px;
+      }
+    }
+  }
+
+  @include breakpoint((to: 1200px)) {
+    .desktop,
+    .submenu {
+      display: none;
+    }
+    .mobile,
+    .submenu-1 {
+      display: block;
+    }
+    .mobile,
+    .submenus {
+      padding: 10px 20px;
+    }
+    .mobile {
+      position: relative;
+      background: #ccc;
+    }
+    .mobile-menu {
+      float: left;
+      width: 70%;
+      padding: 5px;
+    }
+    .mobile-submenu {
+      float: right;
+      &.opened {
+        .submenus {
+          display: block;
+        }
+      }
+    }
+    .trigger {
+      @include inline-block;
+      width: 35px;
+      height: 5px;
+      cursor: pointer;
+      border-top: 6px solid #eee;
+      border-bottom: 17px double #eee;
+    }
+    .submenus {
+      width: 100%;
+      border-top: 1px solid #333;
+      background: #eee;
+    }
+  }
+}
